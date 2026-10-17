@@ -1,25 +1,30 @@
--- Consulta: informe de ventas
+-- Consulta: comprobante de venta
 
 
 USE MiniMarket;
 GO
 
-DECLARE @fecha_inicio DATE = '2026-10-01';
-DECLARE @fecha_fin DATE = '2026-10-31';
+DECLARE @id_compra INT = 1;
 
 SELECT
-    cat.nombre_categoria AS categoria,
-    SUM(d.subtotal) AS total_vendido,
-    SUM(d.cantidad) AS unidades_vendidas,
-    COUNT(DISTINCT c.id_compra) AS cantidad_compras
+    c.id_compra,
+    c.fecha_hora,
+    cl.nombre_y_apellido AS cliente,
+    cl.dni,
+    mp.tipo_de_pago AS metodo_pago,
+    p.nombre AS producto,
+    d.cantidad,
+    d.precio_unitario,
+    d.subtotal,
+    c.costo AS total_compra
 FROM COMPRA AS c
+INNER JOIN CLIENTE AS cl
+    ON c.cod_cliente = cl.cod_cliente
+INNER JOIN METODO_DE_PAGO AS mp
+    ON c.id_metodo = mp.id_metodo
 INNER JOIN DETALLE_DE_COMPRA AS d
     ON c.id_compra = d.id_compra
 INNER JOIN PRODUCTO AS p
     ON d.cod_producto = p.cod_producto
-INNER JOIN CATEGORIA AS cat
-    ON p.id_categoria = cat.id_categoria
-WHERE c.fecha_hora >= @fecha_inicio
-  AND c.fecha_hora < DATEADD(DAY, 1, @fecha_fin)
-GROUP BY cat.nombre_categoria
-ORDER BY total_vendido DESC;
+WHERE c.id_compra = @id_compra
+ORDER BY d.cod_detalle;
