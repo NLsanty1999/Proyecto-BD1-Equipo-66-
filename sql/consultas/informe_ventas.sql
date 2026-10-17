@@ -23,3 +23,5 @@ WHERE c.fecha_hora >= @fecha_inicio
   AND c.fecha_hora < DATEADD(DAY, 1, @fecha_fin)
 GROUP BY cat.nombre_categoria
 ORDER BY total_vendido DESC;
+
+
